@@ -1,4 +1,6 @@
 # requirements_detection
+
+```
 kde-pipeline/
 ├── README.md                  # names, BannerIDs, emails, "LLM: Gemma-3-1B"
 ├── PROMPT.md                  # zero-shot / few-shot / chain-of-thought sections
@@ -22,7 +24,7 @@ kde-pipeline/
 │   ├── docker-cis-v2.pdf
 │   └── dockerfiles.zip
 └── outputs/                   # YAMLs, TEXT files, CSV (generated)
-
+```
 
 ## Team
 
