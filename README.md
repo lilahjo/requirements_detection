@@ -31,6 +31,6 @@ kde-pipeline/
 | Name | Role | Banner ID | Email|
 |---|---|---|---|
 | Lilah Johnson |Task-3 | 904300259|laj0039|
-| Fredrika Dunson |Task-1 functions 1-4 |||
+| Fredrika Dunson |Task-1 functions 1-4 |904297725|ftd0002|
 | Trinity|Task-1 functions 5-6 |||
 
