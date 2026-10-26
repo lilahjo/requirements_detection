@@ -28,9 +28,9 @@ kde-pipeline/
 
 ## Team
 
-| Name | Role |
-|---|---|
-| Lilah Johnson |Task-3  |
-| Fredrika Dunson |Task-1 functions 1-4 |
-| Trinity|Task-1 functions 5-6 |
+| Name | Role | Banner ID | Email|
+|---|---|---|---|
+| Lilah Johnson |Task-3 | 904300259|laj0039|
+| Fredrika Dunson |Task-1 functions 1-4 |||
+| Trinity|Task-1 functions 5-6 |||
 
