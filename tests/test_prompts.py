@@ -1,5 +1,3 @@
-"""Tests for Task-1 functions 1-4 (src/prompts.py). One test per function."""
-
 import pytest
 import yaml
 
@@ -15,7 +13,6 @@ SAMPLE_TEXT = "4.1 Ensure that a user for the container has been created (Manual
 
 
 def _write_pdf(path, text):
-    """Write a minimal one-page PDF containing `text`, so tests need no real benchmark files."""
     stream = f"BT /F1 12 Tf 72 720 Td ({text}) Tj ET".encode("latin-1")
     objects = [
         b"<< /Type /Catalog /Pages 2 0 R >>",
@@ -52,7 +49,6 @@ def test_validate_inputs(tmp_path):
     assert "user for the container" in doc1["text"]
     assert "privileged containers" in doc2["text"]
 
-    # The same document twice is a valid input pair (TA runs v1+v1, v2+v2).
     same1, same2 = validate_inputs(first, first)
     assert same1["text"] == same2["text"]
 
@@ -95,7 +91,6 @@ def test_build_few_shot():
     assert "Example 1" in prompt and "Example 2" in prompt
     assert prompt.rstrip().endswith("YAML:")
 
-    # The worked example answers must be valid YAML in the shared contract shape.
     example = prompt.split("Example 2")[0].split("YAML:\n", 1)[1].split("\n\n")[0]
     parsed = yaml.safe_load(example)
     assert parsed["element1"]["name"] == "container user"
@@ -106,7 +101,6 @@ def test_build_few_shot():
 
 
 def test_build_cot():
-    # Braces in the document (the CIS PDFs contain "{{ .DockerRootDir }}") must pass through unchanged.
     text = SAMPLE_TEXT + "\nmountpoint -- \"$(docker info -f '{{ .DockerRootDir }}')\""
     prompt = build_cot(text)
     assert isinstance(prompt, str)

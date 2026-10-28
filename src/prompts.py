@@ -1,18 +1,3 @@
-"""Task-1, functions 1-4: input validation and prompt construction.
-
-validate_inputs() checks the two requirement PDFs and returns their text.
-build_zero_shot(), build_few_shot() and build_cot() each turn the text of one
-document into a prompt string that asks Gemma-3-1B for key data elements (KDEs)
-in the YAML shape the rest of the pipeline expects:
-
-    element1:
-      name: "user privileges"
-      requirements:
-        - "Ensure a user for the container has been created"
-
-The prompt text here is mirrored in PROMPT.md; keep the two in sync.
-"""
-
 import logging
 import os
 from pathlib import Path
@@ -20,26 +5,15 @@ from pathlib import Path
 from pypdf import PdfReader
 from pypdf.errors import PdfReadError
 
-# Benchmark PDFs are ~2 MB; anything this large is almost certainly the wrong file.
 MAX_FILE_BYTES = 50 * 1024 * 1024
 PDF_MAGIC = b"%PDF-"
-
-# The chain-of-thought prompt asks the model to put its YAML after this line,
-# so the LLM runner can split the reasoning from the answer.
 COT_ANSWER_MARKER = "FINAL YAML:"
-
 PROMPT_TYPES = ("zero-shot", "few-shot", "chain-of-thought")
 
-# pypdf logs a warning for every malformed xref entry in the CIS PDFs.
 logging.getLogger("pypdf").setLevel(logging.ERROR)
 
 
-# ---------------------------------------------------------------------------
-# Function 1: input validation
-# ---------------------------------------------------------------------------
-
 def _validate_one(path):
-    """Validate a single PDF path and return {"name", "path", "text"}."""
     if not isinstance(path, (str, os.PathLike)):
         raise TypeError(f"Expected a file path, got {type(path).__name__}")
     if isinstance(path, str) and not path.strip():
@@ -81,26 +55,8 @@ def _validate_one(path):
 
 
 def validate_inputs(first_pdf, second_pdf):
-    """Validate the two requirements documents and extract their text.
-
-    Each path must point to an existing, non-empty, readable, unencrypted PDF
-    under MAX_FILE_BYTES that contains extractable text. The same file may be
-    passed twice (the TA runs v1+v1 and v2+v2).
-
-    Returns a tuple of two dicts, one per document, each with:
-        name -- file name without extension, e.g. "docker-cis-v0"
-                (used to name the output YAML, e.g. docker-cis-v0-kdes.yaml)
-        path -- absolute path to the PDF
-        text -- the full extracted text
-
-    Raises TypeError, ValueError or FileNotFoundError on bad input.
-    """
     return _validate_one(first_pdf), _validate_one(second_pdf)
 
-
-# ---------------------------------------------------------------------------
-# Prompt templates
-# ---------------------------------------------------------------------------
 
 _TASK_DESCRIPTION = (
     "You are a security analyst. Read the security requirements document below "
@@ -201,23 +157,13 @@ def _check_document_text(document_text):
     return text
 
 
-# ---------------------------------------------------------------------------
-# Functions 2-4: prompt builders
-# ---------------------------------------------------------------------------
-
 def build_zero_shot(document_text):
-    """Return a zero-shot prompt asking for the KDEs in document_text."""
     return ZERO_SHOT_TEMPLATE.format(document_text=_check_document_text(document_text))
 
 
 def build_few_shot(document_text):
-    """Return a few-shot prompt (two worked examples) for the KDEs in document_text."""
     return FEW_SHOT_TEMPLATE.format(document_text=_check_document_text(document_text))
 
 
 def build_cot(document_text):
-    """Return a chain-of-thought prompt for the KDEs in document_text.
-
-    The model is told to reason first and put its YAML after COT_ANSWER_MARKER.
-    """
     return COT_TEMPLATE.format(document_text=_check_document_text(document_text))
